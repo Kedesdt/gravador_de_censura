@@ -15,6 +15,7 @@ def list_files_in_range(base_dir, start_dt, end_dt):
         hour_folder = current.strftime("%H")
         folder_path = os.path.join(base_dir, date_folder, hour_folder)
         if os.path.isdir(folder_path):
+            print(os.path.realpath("."))
             for fname in os.listdir(folder_path):
                 # Espera padrão: YYYYMMDDHHMMSS-gravacao.mp3
                 match = re.match(r"(\d{14})-gravacao\.mp3$", fname)
