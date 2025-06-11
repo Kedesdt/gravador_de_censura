@@ -1,2 +1,4 @@
 gravacoes/
 venv/
+dist/
+build/

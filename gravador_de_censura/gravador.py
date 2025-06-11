@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from web.web_app import app
 import threading
+import json
 
 
 # recorder.record()
@@ -33,6 +34,16 @@ def load_config(config_path):
 
 def run():
 
+    import checker
+
+    if not checker.check():
+        root = tk.Tk()
+        root.geometry("300x200")
+        label = tk.Label(root, text="Infelizmente seu produto expirou")
+        label.pack()
+        root.mainloop()
+        exit()
+
     config_path = ask_config_path()
     if not config_path:
         exit()  # Usuário cancelou
@@ -41,13 +52,11 @@ def run():
     if not config:
         exit()  # Erro ao carregar
 
-    recorders = config.get("recorders", 4)  # Valor padrão 4
-
     flask_thread = threading.Thread(target=start_flask, daemon=True)
     flask_thread.start()
 
     root = tk.Tk()
-    app = MainWindow(root, recorders=recorders)
+    app = MainWindow(root, config=config)
     root.protocol("WM_DELETE_WINDOW", app.on_close)
     root.mainloop()
 

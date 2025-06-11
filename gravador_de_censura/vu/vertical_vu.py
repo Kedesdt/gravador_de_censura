@@ -13,6 +13,7 @@ class Led:
         frame=None,
         width=None,
         height=None,
+        orientation=None,
     ):
 
         self.height = height
@@ -31,7 +32,11 @@ class Led:
             bg="#000000",
         )
         self.frame_led.pack_propagate(False)
-        self.frame_led.pack()
+        if orientation == "H":
+            self.frame_led.pack(side=tkinter.RIGHT)
+        else:
+            self.frame_led.pack(side=tkinter.TOP)
+
         self.led = tkinter.Frame(
             self.frame_led,
             width=self.width - border,
@@ -39,7 +44,7 @@ class Led:
             pady=border,
             padx=border,
         )
-        self.led.pack(side=tkinter.TOP)
+        self.led.pack(side=tkinter.RIGHT)
         self.set(self.value - 1)
 
     def set(self, value):
@@ -52,7 +57,9 @@ class Led:
 
 class Vu(Thread):
 
-    def __init__(self, master, frame, width, height, player=None, daemon=True):
+    def __init__(
+        self, master, frame, width, height, player=None, orientation="H", daemon=True
+    ):
 
         super().__init__(daemon=daemon)
 
@@ -60,8 +67,12 @@ class Vu(Thread):
         self.master = master
         self.frame_l = tkinter.Frame(frame)
         self.frame_r = tkinter.Frame(frame)
-        self.frame_l.pack(side=tkinter.LEFT)
-        self.frame_r.pack(side=tkinter.RIGHT)
+        if orientation == "H":
+            self.frame_l.pack(side=tkinter.TOP)
+            self.frame_r.pack(side=tkinter.BOTTOM)
+        else:
+            self.frame_l.pack(side=tkinter.LEFT)
+            self.frame_r.pack(side=tkinter.RIGHT)
         self.width = width
         self.height = height
         self.player = player
@@ -90,6 +101,7 @@ class Vu(Thread):
                         value=0 - i,
                         width=self.width / 2,
                         height=int(self.height / self.n),
+                        orientation=orientation,
                     )
                 )
                 self.leds_r.append(
@@ -100,6 +112,7 @@ class Vu(Thread):
                         value=0 - i,
                         width=self.width / 2,
                         height=int(self.height / self.n),
+                        orientation=orientation,
                     )
                 )
             elif i <= 2:
@@ -111,6 +124,7 @@ class Vu(Thread):
                         value=0 - i,
                         width=self.width / 2,
                         height=int(self.height / self.n),
+                        orientation=orientation,
                     )
                 )
                 self.leds_r.append(
@@ -121,6 +135,7 @@ class Vu(Thread):
                         value=0 - i,
                         width=self.width / 2,
                         height=int(self.height / self.n),
+                        orientation=orientation,
                     )
                 )
             else:
@@ -132,6 +147,7 @@ class Vu(Thread):
                         value=0 - i,
                         width=self.width / 2,
                         height=int(self.height / self.n),
+                        orientation=orientation,
                     )
                 )
                 self.leds_r.append(
@@ -142,6 +158,7 @@ class Vu(Thread):
                         value=0 - i,
                         width=self.width / 2,
                         height=int(self.height / self.n),
+                        orientation=orientation,
                     )
                 )
 

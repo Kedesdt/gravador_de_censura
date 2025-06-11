@@ -10,9 +10,9 @@ from tkinter import ttk
 
 class MainWindow:
 
-    def __init__(self, master, recorders=4):
+    def __init__(self, master, config):
         self.master = master
-        self.recorders = recorders
+        self.recorders = len(config["recorders_configs"])
         master.title("Gravador de Censura")
 
         self.dir_labels = {}
@@ -33,26 +33,34 @@ class MainWindow:
 
         for i in range(self.recorders):
 
-            frame = tk.Frame(master)
+            name = config["recorders_configs"][i]["nome"]
+            path = config["recorders_configs"][i]["caminho"]
+
+            frame = tk.Frame(master, padx=20, pady=20)
+
+            name_label = tk.Label(frame, text=name, font=("Arial", 18, "bold"))
+            name_label.grid(row=0, column=1, columnspan=2)
 
             # Entrada para diretório
             dir_label = tk.Label(frame, text="Diretório:")
             self.dir_labels[i] = dir_label
             # dir_label.grid(row=0, column=0, sticky="e")
-            dir_entry = tk.Entry(frame, width=20)
+            dir_entry = tk.Entry(frame, width=90, text=path)
+            dir_entry.insert(0, path)
+            self.set_directory(i, dir_entry.get())
             self.dir_entries[i] = dir_entry
-            dir_entry.grid(row=0, column=1)
+            dir_entry.grid(row=1, column=1)
             dir_button = tk.Button(
                 frame, text="Selecionar", command=lambda x=i: self.select_directory(x)
             )
             self.dir_buttons[i] = dir_button
-            dir_button.grid(row=1, column=1)
+            dir_button.grid(row=1, column=2)
 
             # Entrada para device de áudio (Combobox)
             device_label = tk.Label(frame, text="Device de Áudio:")
             # device_label.grid(row=1, column=0, sticky="e")
             self.device_labels[i] = device_label
-            device_combobox = ttk.Combobox(frame, width=37, state="readonly")
+            device_combobox = ttk.Combobox(frame, width=90, state="readonly")
             device_combobox.grid(row=2, column=1, columnspan=2)
             self.device_comboboxs[i] = device_combobox
             self.populate_audio_devices(i)
@@ -61,24 +69,24 @@ class MainWindow:
             start_button = tk.Button(
                 frame, text="Start", command=lambda x=i: self.start(x)
             )
-            start_button.grid(row=3, column=1, sticky="ew")
+            start_button.grid(row=3, column=1, sticky="ew", columnspan=2)
             self.start_buttons[i] = start_button
 
             # Botão Stop
             stop_button = tk.Button(
                 frame, text="Stop", command=lambda x=i: self.stop(x)
             )
-            stop_button.grid(row=4, column=1, sticky="ew")
+            stop_button.grid(row=4, column=1, sticky="ew", columnspan=2)
             self.stop_buttons[i] = stop_button
 
             # Vertical VU
             vu_frame = tk.Frame(frame)
-            vu_frame.grid(row=5, column=1, pady=10)
+            vu_frame.grid(row=5, column=1, pady=10, columnspan=2)
             self.vu_frames[i] = vu_frame
             vu = Vu(frame, vu_frame, width=60, height=200, player=None, daemon=True)
             self.vus[i] = vu
 
-            frame.pack(side="left")
+            frame.pack(side=tk.TOP)
 
     def populate_audio_devices(self, i):
 
@@ -117,7 +125,7 @@ class MainWindow:
             self.sd_recorders[i].start()
             self.sd_recorders[i].start_record()
 
-            self.start_buttons[i].configure(text="Gravando...", bg="red")
+            self.start_buttons[i].configure(text="Recording...", bg="red")
 
     def stop(self, i):
         if self.recording[i]:
